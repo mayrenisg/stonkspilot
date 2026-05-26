@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StonksPilot — Tu copiloto financiero</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080810;
+  --bg2: #0e0e1a;
+  --bg3: #13131f;
+  --yellow: #f5c842;
+  --yellow2: #f0a020;
+  --yellow-dim: rgba(245,200,66,0.12);
+  --yellow-border: rgba(245,200,66,0.2);
+  --white: #f0ede8;
+  --muted: #5a5a72;
+  --muted2: #3a3a52;
+  --green: #22d68a;
+  --red: #ff4d6d;
+  --blue: #4d9fff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.4;
+}
+
+/* ─── SCROLLBAR ─── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--yellow-border); border-radius: 2px; }
+
+/* ─── NAV ─── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+  padding: 20px 60px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  background: rgba(8,8,16,0.8);
+  backdrop-filter: blur(20px);
+}
+
+.nav-logo {
+  display: flex; align-items: center; gap: 12px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 2px;
+  color: var(--yellow);
+}
+
+.nav-logo-icon {
+  width: 36px; height: 36px;
+  background: var(--yellow);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  color: var(--bg);
+}
+
+.nav-links {
+  display: flex; gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--white); }
+
+.nav-cta {
+  background: var(--yellow);
+  color: var(--bg);
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+.nav-cta:hover { background: #ffd84d; transform: translateY(-1px); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  text-align: center;
+  padding: 120px 40px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated grid background */
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(245,200,66,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,200,66,0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+  animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(60px); }
+}
+
+.hero-glow {
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(245,200,66,0.08) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.7; }
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--yellow-dim);
+  border: 1px solid var(--yellow-border);
+  color: var(--yellow);
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  position: relative;
+  animation: fadeUp 0.6s ease both;
+}
+
+.badge-dot {
+  width: 6px; height: 6px;
+  background: var(--yellow);
+  border-radius: 50%;
+  animation: blink 2s infinite;
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4rem, 11vw, 9rem);
+  line-height: 0.9;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  position: relative;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+
+.hero-title .accent { color: var(--yellow); }
+.hero-title .stroke {
+  -webkit-text-stroke: 2px var(--yellow);
+  color: transparent;
+}
+
+.hero-sub-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--muted);
+  margin-bottom: 40px;
+  position: relative;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+.hero-sub-title span { color: var(--yellow); }
+
+.hero-desc {
+  font-size: 1.05rem;
+  color: var(--muted);
+  max-width: 540px;
+  line-height: 1.8;
+  margin-bottom: 48px;
+  position: relative;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+.hero-desc strong { color: var(--white); }
+
+.hero-buttons {
+  display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+  position: relative;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+
+.btn-primary {
+  background: var(--yellow);
+  color: var(--bg);
+  padding: 16px 40px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 0 40px rgba(245,200,66,0.2);
+}
+.btn-primary:hover { background: #ffd84d; transform: translateY(-2px); box-shadow: 0 0 60px rgba(245,200,66,0.35); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--white);
+  padding: 16px 32px;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border: 1px solid var(--muted2);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-ghost:hover { border-color: var(--yellow-border); color: var(--yellow); }
+
+/* ─── TICKER ─── */
+.ticker {
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 12px 0;
+  overflow: hidden;
+  background: var(--bg2);
+}
+.ticker-track {
+  display: flex; gap: 48px;
+  animation: ticker 25s linear infinite;
+  white-space: nowrap; width: max-content;
+}
+.ticker-item {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--muted);
+  display: flex; align-items: center; gap: 10px;
+}
+.ticker-item .up { color: var(--green); }
+.ticker-item .down { color: var(--red); }
+.ticker-sep { color: var(--muted2); }
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ─── SECTIONS ─── */
+section { padding: 100px 60px; }
+
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--yellow);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-label::before {
+  content: '';
+  width: 24px; height: 1px;
+  background: var(--yellow);
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.section-sub {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+  max-width: 500px;
+}
+
+/* ─── ABOUT ─── */
+.about {
+  background: var(--bg2);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.about-logo-wrap {
+  display: flex; justify-content: center; align-items: center;
+  position: relative;
+}
+
+.about-logo-wrap::before {
+  content: '';
+  position: absolute;
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(245,200,66,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+}
+
+.about-logo {
+  width: 280px; height: 280px;
+  animation: floatLogo 5s ease-in-out infinite;
+}
+@keyframes floatLogo {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-16px) rotate(2deg); }
+}
+
+.about-stats {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 40px;
+}
+
+.stat-card {
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 20px;
+}
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem;
+  color: var(--yellow);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 0.78rem; color: var(--muted); }
+
+/* ─── FEATURES NOW ─── */
+.features-now { background: var(--bg); }
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2px;
+  margin-top: 60px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+
+.feature-card {
+  background: var(--bg3);
+  padding: 36px 32px;
+  transition: background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card:hover { background: #17172a; }
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--yellow), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.feature-card:hover::before { opacity: 1; }
+
+.feature-card.highlight {
+  background: var(--yellow-dim);
+  border: 1px solid var(--yellow-border);
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.feature-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  margin-bottom: 10px;
+  color: var(--white);
+}
+
+.feature-desc {
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.feature-tag {
+  display: inline-block;
+  margin-top: 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--green);
+  background: rgba(34,214,138,0.08);
+  border: 1px solid rgba(34,214,138,0.15);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+/* ─── BOT DEMO ─── */
+.demo { background: var(--bg2); }
+
+.demo-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+  margin-top: 60px;
+}
+
+.demo-phone {
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5);
+}
+
+.phone-header {
+  background: #1e1e30;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.phone-avatar {
+  width: 32px; height: 32px;
+  background: var(--yellow);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--bg);
+  font-weight: 700;
+}
+
+.phone-name { font-weight: 600; font-size: 0.9rem; }
+.phone-status { font-size: 0.72rem; color: var(--green); }
+
+.phone-messages { padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+
+.msg {
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  max-width: 85%;
+  animation: fadeUp 0.4s ease both;
+}
+
+.msg.bot {
+  background: #1e1e30;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+}
+
+.msg.user {
+  background: var(--yellow);
+  color: var(--bg);
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
+}
+
+.msg-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--yellow);
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.msg code {
+  background: rgba(245,200,66,0.1);
+  color: var(--yellow);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8em;
+}
+
+.commands-list {
+  display: flex; flex-direction: column; gap: 12px;
+}
+
+.cmd-item {
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex; align-items: flex-start; gap: 16px;
+  transition: border-color 0.2s;
+}
+.cmd-item:hover { border-color: var(--yellow-border); }
+
+.cmd-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--yellow);
+  min-width: 140px;
+  font-weight: 500;
+}
+
+.cmd-desc {
+  font-size: 0.84rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ─── ROADMAP ─── */
+.roadmap { background: var(--bg); }
+
+.roadmap-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-top: 60px;
+}
+
+.roadmap-phase {
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.roadmap-phase.current {
+  border-color: var(--yellow-border);
+  background: var(--yellow-dim);
+}
+
+.roadmap-phase.current::after {
+  content: 'EN VIVO';
+  position: absolute;
+  top: 20px; right: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--yellow);
+  background: rgba(245,200,66,0.1);
+  border: 1px solid var(--yellow-border);
+  padding: 3px 10px;
+  border-radius: 100px;
+  letter-spacing: 1px;
+}
+
+.phase-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4rem;
+  color: rgba(255,255,255,0.04);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.roadmap-phase.current .phase-num { color: rgba(245,200,66,0.1); }
+
+.phase-title {
+  font-weight: 700;
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+  color: var(--white);
+}
+
+.phase-period {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--yellow);
+  margin-bottom: 20px;
+  letter-spacing: 1px;
+}
+
+.phase-items {
+  list-style: none;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.phase-items li {
+  font-size: 0.86rem;
+  color: var(--muted);
+  display: flex; align-items: flex-start; gap: 10px;
+  line-height: 1.5;
+}
+
+.phase-items li::before {
+  content: '→';
+  color: var(--yellow);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.roadmap-phase.current .phase-items li { color: rgba(240,237,232,0.8); }
+.roadmap-phase.current .phase-items li::before { content: '✓'; color: var(--green); }
+
+/* ─── TECH STACK ─── */
+.stack { background: var(--bg2); }
+
+.stack-grid {
+  display: flex; flex-wrap: wrap; gap: 12px;
+  margin-top: 48px;
+}
+
+.stack-pill {
+  background: var(--bg3);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 100px;
+  padding: 10px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--muted);
+  display: flex; align-items: center; gap: 8px;
+  transition: all 0.2s;
+}
+.stack-pill:hover { border-color: var(--yellow-border); color: var(--yellow); }
+.stack-pill .dot { width: 6px; height: 6px; border-radius: 50%; }
+
+/* ─── CTA ─── */
+.cta-section {
+  padding: 120px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(245,200,66,0.05) 0%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.cta-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+  position: relative;
+}
+.cta-title .accent { color: var(--yellow); }
+
+.cta-sub {
+  color: var(--muted);
+  font-size: 1rem;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  padding: 32px 60px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--bg2);
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  section { padding: 60px 24px; }
+  .about, .demo-inner, .roadmap-grid { grid-template-columns: 1fr; gap: 40px; }
+  .cta-section { padding: 80px 24px; }
+  footer { flex-direction: column; gap: 12px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">✈</div>
+    StonksPilot
+  </div>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#bot">El Bot</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+  </ul>
+  <button class="nav-cta">Abrir en Telegram →</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-badge">
+    <div class="badge-dot"></div>
+    Bot activo · Wallbit API · Hackathon 2025
+  </div>
+
+  <h1 class="hero-title">
+    <span class="accent">STONKS</span><br>
+    <span class="stroke">PILOT</span>
+  </h1>
+
+  <p class="hero-sub-title">
+    Tu plata vuela sola <span>✈</span>
+  </p>
+
+  <p class="hero-desc">
+    Bot de Telegram para <strong>freelancers latinos</strong> que cobran en USD. Conectado a tu cuenta Wallbit — detecta tus pagos, distribuye tu plata e invierte automáticamente en S&P500. <strong>Configurás una vez. El piloto hace el resto.</strong>
+  </p>
+
+  <div class="hero-buttons">
+    <button class="btn-primary">✈ Abrir en Telegram</button>
+    <button class="btn-ghost">Ver cómo funciona ↓</button>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">SPY <span class="up">+0.82%</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">QQQ <span class="up">+1.24%</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">BTC <span class="down">-0.33%</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">USD/ARS <span class="up">estable</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">Wallbit API <span class="up">conectado ✓</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">DCA automático <span class="up">activo</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">AAPL <span class="up">+0.51%</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">Freelancers atendidos <span class="up">∞</span> <span class="ticker-sep">·</span></span>
+    <!-- repeat -->
+    <span class="ticker-item">SPY <span class="up">+0.82%</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">QQQ <span class="up">+1.24%</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">BTC <span class="down">-0.33%</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">USD/ARS <span class="up">estable</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">Wallbit API <span class="up">conectado ✓</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">DCA automático <span class="up">activo</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">AAPL <span class="up">+0.51%</span> <span class="ticker-sep">·</span></span>
+    <span class="ticker-item">Freelancers atendidos <span class="up">∞</span> <span class="ticker-sep">·</span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-logo-wrap reveal">
+    <svg class="about-logo" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#1a1a2e"/>
+          <stop offset="100%" stop-color="#0a0a0f"/>
+        </radialGradient>
+        <radialGradient id="gY2" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#f5c842" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#f5c842" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="pG2" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#f5c842"/>
+          <stop offset="100%" stop-color="#f0a020"/>
+        </linearGradient>
+        <linearGradient id="cG2" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#f5c842" stop-opacity="0.08"/>
+          <stop offset="100%" stop-color="#f5c842" stop-opacity="0.35"/>
+        </linearGradient>
+        <filter id="gl2"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="sG2"><feGaussianBlur stdDeviation="8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <clipPath id="cc2"><circle cx="200" cy="200" r="185"/></clipPath>
+      </defs>
+      <circle cx="200" cy="200" r="195" fill="url(#bg2)"/>
+      <circle cx="200" cy="200" r="185" fill="none" stroke="#f5c842" stroke-width="1.5" stroke-opacity="0.3"/>
+      <circle cx="200" cy="200" r="120" fill="url(#gY2)"/>
+      <g clip-path="url(#cc2)" opacity="0.05" stroke="#f5c842" stroke-width="0.8">
+        <line x1="15" y1="120" x2="385" y2="120"/><line x1="15" y1="160" x2="385" y2="160"/>
+        <line x1="15" y1="200" x2="385" y2="200"/><line x1="15" y1="240" x2="385" y2="240"/>
+        <line x1="15" y1="280" x2="385" y2="280"/>
+        <line x1="100" y1="15" x2="100" y2="385"/><line x1="150" y1="15" x2="150" y2="385"/>
+        <line x1="200" y1="15" x2="200" y2="385"/><line x1="250" y1="15" x2="250" y2="385"/>
+        <line x1="300" y1="15" x2="300" y2="385"/>
+      </g>
+      <g clip-path="url(#cc2)">
+        <path d="M 60 280 L 90 260 L 120 270 L 150 240 L 180 220 L 210 230 L 240 190 L 270 160 L 300 140 L 330 120 L 340 115 L 340 310 L 60 310 Z" fill="url(#cG2)"/>
+        <polyline points="60,280 90,260 120,270 150,240 180,220 210,230 240,190 270,160 300,140 330,120 340,115" fill="none" stroke="#f5c842" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" filter="url(#gl2)" opacity="0.7"/>
+        <circle cx="240" cy="190" r="3.5" fill="#f5c842" opacity="0.8"/>
+        <circle cx="330" cy="120" r="4.5" fill="#f5c842" filter="url(#gl2)"/>
+      </g>
+      <g transform="translate(148, 148) rotate(-35, 52, 52)" filter="url(#sG2)">
+        <path d="M 52 20 L 72 48 L 84 46 L 84 58 L 72 56 L 52 84 L 40 80 L 50 58 L 28 62 L 24 68 L 16 68 L 18 52 L 16 36 L 24 36 L 28 42 L 50 46 L 40 24 Z" fill="url(#pG2)" stroke="#ffdd55" stroke-width="1"/>
+      </g>
+      <ellipse cx="200" cy="200" rx="155" ry="45" fill="none" stroke="#f5c842" stroke-width="0.8" stroke-opacity="0.12" stroke-dasharray="4 6" transform="rotate(-20, 200, 200)"/>
+      <circle cx="80" cy="90" r="1.5" fill="#f5c842" opacity="0.5"/>
+      <circle cx="320" cy="80" r="2" fill="#f5c842" opacity="0.4"/>
+      <circle cx="340" cy="300" r="1.5" fill="#f5c842" opacity="0.3"/>
+      <text x="200" y="355" text-anchor="middle" font-family="'Arial Black', sans-serif" font-size="18" font-weight="900" fill="#f5c842" letter-spacing="6" opacity="0.9">STONKS</text>
+      <text x="200" y="375" text-anchor="middle" font-family="'Arial Black', sans-serif" font-size="11" font-weight="400" fill="#f5c842" letter-spacing="10" opacity="0.5">PILOT</text>
+    </svg>
+  </div>
+
+  <div class="reveal">
+    <div class="section-label">About</div>
+    <h2 class="section-title">El copiloto que<br>faltaba.</h2>
+    <p style="color: var(--muted); line-height: 1.8; margin-bottom: 32px;">
+      StonksPilot nació en un hackathon de Wallbit para resolver un problema real: <strong style="color:var(--white)">los freelancers latinos cobran en USD pero no tienen herramientas financieras que entiendan su realidad.</strong>
+      <br><br>
+      Ni bancos tradicionales, ni apps gringas. Un bot de Telegram que habla tu idioma, conoce tu cuenta Wallbit en tiempo real y toma decisiones por vos mientras vivís tu vida.
+    </p>
+
+    <div class="about-stats">
+      <div class="stat-card">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Automatizado</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">$0</div>
+        <div class="stat-label">Costo para el usuario</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Monitoreando tu cuenta</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">S&P</div>
+        <div class="stat-label">Inversión automática</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES NOW -->
+<section class="features-now" id="features">
+  <div class="section-label reveal">Lo que hace hoy</div>
+  <h2 class="section-title reveal">Funcionando<br>ahora mismo.</h2>
+  <p class="section-sub reveal">Conectado en vivo a la API de Wallbit. Sin simulaciones.</p>
+
+  <div class="features-grid reveal">
+    <div class="feature-card highlight">
+      <span class="feature-icon">💰</span>
+      <div class="feature-title">Balance en tiempo real</div>
+      <div class="feature-desc">Consultá tu saldo de Wallbit directamente desde Telegram. Datos frescos, sin cache, en segundos.</div>
+      <span class="feature-tag">✓ en vivo</span>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">📋</span>
+      <div class="feature-title">Historial de transacciones</div>
+      <div class="feature-desc">Ver tus últimos movimientos con un comando. Ingresos, egresos, fechas y montos reales.</div>
+      <span class="feature-tag">✓ en vivo</span>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">🔄</span>
+      <div class="feature-title">Detección de pagos nuevos</div>
+      <div class="feature-desc">El piloto monitorea tu cuenta cada minuto. Cuando llega plata nueva, lo detecta automáticamente y ejecuta tus reglas.</div>
+      <span class="feature-tag">✓ en vivo</span>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">⚙️</span>
+      <div class="feature-title">Motor de distribución</div>
+      <div class="feature-desc">Configurás los porcentajes una vez: inversión, impuestos, metas, libre. Cada pago nuevo se distribuye solo.</div>
+      <span class="feature-tag">✓ en vivo</span>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">📈</span>
+      <div class="feature-title">DCA automático S&P500</div>
+      <div class="feature-desc">Cuando llega un pago que supera tu trigger, el piloto ejecuta la compra en SPY automáticamente. Sin que toques nada.</div>
+      <span class="feature-tag">✓ en vivo</span>
+    </div>
+
+    <div class="feature-card">
+      <span class="feature-icon">🧮</span>
+      <div class="feature-title">Simulador de distribución</div>
+      <div class="feature-desc">Usá /distribuir 2000 para ver exactamente cómo el piloto repartiría ese pago antes de que llegue.</div>
+      <span class="feature-tag">✓ en vivo</span>
+    </div>
+  </div>
+</section>
+
+<!-- BOT DEMO -->
+<section class="demo" id="bot">
+  <div class="section-label reveal">El bot</div>
+  <h2 class="section-title reveal">Hablale en<br>español.</h2>
+
+  <div class="demo-inner">
+    <div class="demo-phone reveal">
+      <div class="phone-header">
+        <div class="phone-avatar">✈</div>
+        <div>
+          <div class="phone-name">StonksPilot</div>
+          <div class="phone-status">● en línea</div>
+        </div>
+      </div>
+      <div class="phone-messages">
+        <div class="msg bot">
+          <div class="msg-label">STONKSPILOT</div>
+          ✈ <strong>¡Bienvenido a StonksPilot!</strong><br><br>
+          Tu copiloto financiero para freelancers latinos. Configurá tus reglas una vez y tu plata vuela sola 🚀
+        </div>
+        <div class="msg user">/balance</div>
+        <div class="msg bot">
+          <div class="msg-label">STONKSPILOT</div>
+          💰 <strong>Tu balance actual</strong><br><br>
+          💳 Disponible: <strong>$3,420.00</strong><br>
+          🏦 Cuenta: USD<br><br>
+          <em>Actualizado ahora mismo ✅</em>
+        </div>
+        <div class="msg user">/distribuir 2000</div>
+        <div class="msg bot">
+          <div class="msg-label">STONKSPILOT</div>
+          ✈ <strong>Piloto distribuiría $2,000:</strong><br><br>
+          📈 Inversión (20%): <code>$400</code><br>
+          🧾 Impuestos (15%): <code>$300</code><br>
+          🎯 Metas (10%): <code>$200</code><br>
+          💳 Libre (55%): <code>$1,100</code>
+        </div>
+        <div class="msg user">/reglas</div>
+        <div class="msg bot">
+          <div class="msg-label">STONKSPILOT</div>
+          ⚙️ Tu piloto vuela así:<br><br>
+          📈 Inversión: <strong>20%</strong> → S&P500<br>
+          🧾 Impuestos: <strong>15%</strong><br>
+          🎯 Metas: <strong>10%</strong><br>
+          💳 Libre: <strong>55%</strong><br>
+          🔄 DCA activo: <strong>Sí</strong> · trigger $500
+        </div>
+      </div>
+    </div>
+
+    <div class="commands-list reveal">
+      <div class="cmd-item">
+        <span class="cmd-name">/start</span>
+        <span class="cmd-desc">Bienvenida y tour del bot con todos los comandos disponibles</span>
+      </div>
+      <div class="cmd-item">
+        <span class="cmd-name">/balance</span>
+        <span class="cmd-desc">Tu saldo actual en Wallbit, actualizado en tiempo real</span>
+      </div>
+      <div class="cmd-item">
+        <span class="cmd-name">/transacciones</span>
+        <span class="cmd-desc">Últimos 5 movimientos de tu cuenta con fechas y montos</span>
+      </div>
+      <div class="cmd-item">
+        <span class="cmd-name">/reglas</span>
+        <span class="cmd-desc">Ver cómo está configurado tu piloto automático</span>
+      </div>
+      <div class="cmd-item">
+        <span class="cmd-name">/distribuir [monto]</span>
+        <span class="cmd-desc">Simulá cómo se distribuiría un pago antes de que llegue</span>
+      </div>
+      <div class="cmd-item">
+        <span class="cmd-name">/meta</span>
+        <span class="cmd-desc">Ver progreso de tus metas de ahorro <em style="color:var(--yellow)">(próximamente)</em></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="roadmap" id="roadmap">
+  <div class="section-label reveal">Roadmap</div>
+  <h2 class="section-title reveal">Lo que viene.</h2>
+  <p class="section-sub reveal">StonksPilot está en construcción activa. Esto es lo que viene después del hackathon.</p>
+
+  <div class="roadmap-grid reveal">
+    <div class="roadmap-phase current">
+      <div class="phase-num">01</div>
+      <div class="phase-title">MVP — Hackathon</div>
+      <div class="phase-period">Mayo 2025</div>
+      <ul class="phase-items">
+        <li>Conexión real con Wallbit API</li>
+        <li>Bot de Telegram funcional</li>
+        <li>Balance y transacciones en vivo</li>
+        <li>Motor de distribución automático</li>
+        <li>Detección de pagos nuevos</li>
+        <li>DCA automático en S&P500</li>
+      </ul>
+    </div>
+
+    <div class="roadmap-phase">
+      <div class="phase-num">02</div>
+      <div class="phase-title">Metas & IA</div>
+      <div class="phase-period">Junio 2025</div>
+      <ul class="phase-items">
+        <li>Metas de ahorro personalizadas</li>
+        <li>Categorías: laptop, viaje, emergencias</li>
+        <li>IA que entiende preguntas en español</li>
+        <li>"¿Cuánto gasté este mes?" real</li>
+        <li>Alertas cuando una meta peligra</li>
+        <li>Progreso visual de metas</li>
+      </ul>
+    </div>
+
+    <div class="roadmap-phase">
+      <div class="phase-num">03</div>
+      <div class="phase-title">Ahorro inteligente</div>
+      <div class="phase-period">Julio 2025</div>
+      <ul class="phase-items">
+        <li>Búsqueda de alternativas baratas</li>
+        <li>Tips de ahorro por país (🇵🇦 🇦🇷 🇲🇽 🇨🇴)</li>
+        <li>Detector de gastos recurrentes altos</li>
+        <li>Comparador de supermercados locales</li>
+        <li>Resúmenes semanales automáticos</li>
+        <li>Alertas de gastos inusuales</li>
+      </ul>
+    </div>
+
+    <div class="roadmap-phase">
+      <div class="phase-num">04</div>
+      <div class="phase-title">Plataforma completa</div>
+      <div class="phase-period">Q3 2025</div>
+      <ul class="phase-items">
+        <li>Web app con dashboard completo</li>
+        <li>Configuración visual de reglas</li>
+        <li>Soporte multi-usuario</li>
+        <li>Integración con Deel y Payoneer</li>
+        <li>Portfolio tracker de inversiones</li>
+        <li>Recomendaciones DCA personalizadas</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="stack">
+  <div class="section-label reveal">Tech stack</div>
+  <h2 class="section-title reveal">Construido con.</h2>
+
+  <div class="stack-grid reveal">
+    <div class="stack-pill"><div class="dot" style="background:#68a063"></div>Node.js</div>
+    <div class="stack-pill"><div class="dot" style="background:#f5c842"></div>Wallbit API</div>
+    <div class="stack-pill"><div class="dot" style="background:#229ED9"></div>Telegram Bot API</div>
+    <div class="stack-pill"><div class="dot" style="background:#cc785c"></div>Anthropic Claude</div>
+    <div class="stack-pill"><div class="dot" style="background:#00758f"></div>SQLite</div>
+    <div class="stack-pill"><div class="dot" style="background:#888"></div>node-cron</div>
+    <div class="stack-pill"><div class="dot" style="background:#2196f3"></div>Axios</div>
+    <div class="stack-pill"><div class="dot" style="background:#22d68a"></div>Telegraf.js</div>
+    <div class="stack-pill"><div class="dot" style="background:#ff6b35"></div>Express.js</div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title reveal">
+    Configurás una vez.<br>
+    <span class="accent">Tu plata vuela sola.</span>
+  </h2>
+  <p class="cta-sub reveal">Gratis. Sin registros. Solo tu cuenta Wallbit.</p>
+  <div style="position:relative">
+    <button class="btn-primary reveal" style="margin: 0 auto; display:inline-flex; font-size:1.05rem; padding: 18px 48px;">
+      ✈ Abrir StonksPilot en Telegram
+    </button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex; align-items:center; gap:10px;">
+    <div class="nav-logo-icon" style="width:28px;height:28px;font-size:14px;">✈</div>
+    <span style="font-family:'Bebas Neue',sans-serif; letter-spacing:2px; color:var(--yellow); font-size:1.1rem;">StonksPilot</span>
+  </div>
+  <span>Construido para el Wallbit API Hackathon 2025 · Hecho con ❤️ para freelancers latinos</span>
+  <span style="font-family:'JetBrains Mono',monospace; font-size:0.75rem;">v0.1.0 · Mayo 2025</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 60);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
